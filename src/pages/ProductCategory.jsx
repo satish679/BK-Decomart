@@ -54,7 +54,7 @@ export default function ProductCategory() {
   const modalFileName = activeModalImg ? getFileName(activeModalImg) : "";
 
   return (
-    <div className="pt-24 sm:pt-28">
+    <div className="pt-36 sm:pt-44 md:pt-52">
       {/* 1. Category Header */}
       <section className="pb-12 sm:pb-16 bg-ivory">
         <div className="max-w-[1440px] mx-auto px-5 sm:px-6 md:px-10">
