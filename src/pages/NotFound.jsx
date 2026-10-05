@@ -5,7 +5,7 @@ import { Home, ArrowRight } from "lucide-react";
 export default function NotFound() {
   return (
     <section
-      className="min-h-[100svh] flex items-center justify-center bg-ivory pt-28 pb-24"
+      className="min-h-[100svh] flex items-center justify-center bg-ivory pt-36 sm:pt-44 md:pt-52 pb-24"
       data-testid="notfound-page"
     >
       <div className="max-w-[1440px] mx-auto px-6 md:px-10 text-center">
