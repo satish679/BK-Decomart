@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { site, getPhoneUrl, getEmailUrl } from "@/lib/site";
+import { site, getPhoneUrl, getEmailUrl, assetUrl } from "@/lib/site";
 import { products } from "@/lib/products";
 import { MapPin, Phone, Mail, Instagram, Facebook, ArrowUp } from "lucide-react";
 
@@ -21,7 +21,7 @@ export default function Footer() {
                 onError={(e) => {
                   if (!e.currentTarget.dataset.fallback) {
                     e.currentTarget.dataset.fallback = "true";
-                    e.currentTarget.src = "/logo.png";
+                    e.currentTarget.src = assetUrl("logo.png");
                   }
                 }}
                 className="h-12 sm:h-16 w-auto object-contain"

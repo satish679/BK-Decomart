@@ -1,13 +1,16 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import LuxImg from "./LuxImg";
+import { assetUrl } from "@/lib/site";
 
 export default function BeforeAfter({
-  beforeSrc = "/before.png",
-  afterSrc = "/after.png",
+  beforeSrc = "before.png",
+  afterSrc = "after.png",
   beforeName = "before",
   afterName = "after",
   className = "",
 }) {
+  const resolvedBefore = beforeSrc ? assetUrl(beforeSrc) : null;
+  const resolvedAfter = afterSrc ? assetUrl(afterSrc) : null;
   const [sliderPos, setSliderPos] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef(null);
@@ -64,8 +67,8 @@ export default function BeforeAfter({
       onTouchStart={() => setIsDragging(true)}
     >
       <div className="w-full h-full">
-        {afterSrc ? (
-          <img src={afterSrc} alt="After Transformation" className="w-full h-full object-cover" />
+        {resolvedAfter ? (
+          <img src={resolvedAfter} alt="After Transformation" className="w-full h-full object-cover" />
         ) : (
           <LuxImg name={afterName} alt="After" className="w-full h-full object-cover" />
         )}
@@ -75,8 +78,8 @@ export default function BeforeAfter({
         className="ba-after absolute inset-0 overflow-hidden"
         style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}
       >
-        {beforeSrc ? (
-          <img src={beforeSrc} alt="Before Transformation" className="w-full h-full object-cover" />
+        {resolvedBefore ? (
+          <img src={resolvedBefore} alt="Before Transformation" className="w-full h-full object-cover" />
         ) : (
           <LuxImg name={beforeName} alt="Before" className="w-full h-full object-cover" />
         )}

@@ -196,8 +196,8 @@ export default function Home() {
 
           <Reveal className="max-w-2xl lg:max-w-3xl mx-auto">
             <BeforeAfter
-              beforeSrc="/before.png"
-              afterSrc="/after.png"
+              beforeSrc="before.png"
+              afterSrc="after.png"
               className="shadow-deep rounded-md aspect-[4/3] max-h-[440px] sm:max-h-[480px] w-full border border-linen/70"
             />
           </Reveal>

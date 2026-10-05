@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { site } from "@/lib/site";
 import Reveal from "@/components/Reveal";
+import LuxImg from "@/components/LuxImg";
 import { ArrowRight } from "lucide-react";
 
 const timeline = [
@@ -41,8 +42,8 @@ export default function About() {
       <section className="pb-16 sm:pb-24 md:pb-32 bg-textile-linen">
         <div className="max-w-[1440px] mx-auto px-5 sm:px-6 md:px-10">
           <Reveal className="hover-zoom aspect-[16/10] sm:aspect-cinema rounded-sm overflow-hidden shadow-soft border border-linen/80 p-1.5 bg-white/70">
-            <img
-              src="/images/store-pic.png"
+            <LuxImg
+              name="store-pic"
               alt="BK Decomart Real Showroom"
               className="w-full h-full object-cover rounded-xs"
             />

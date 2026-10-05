@@ -1,10 +1,13 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { Play, Pause, RotateCcw } from "lucide-react";
+import { assetUrl } from "@/lib/site";
 
 const TOTAL_FRAMES = 212;
 
 function getFrameUrl(index) {
-  return `/ezgif-716facaecf4613de-jpg/frame_${String(index + 1).padStart(4, "0")}.jpg`;
+  return assetUrl(
+    `ezgif-716facaecf4613de-jpg/frame_${String(index + 1).padStart(4, "0")}.jpg`
+  );
 }
 
 export default function CinematicHero() {

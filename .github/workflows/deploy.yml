@@ -32,10 +32,11 @@ jobs:
         run: npm install
 
       - name: Build site
-        env:
-          # If hosting on <username>.github.io/<repository-name>/, GitHub sets repository name
-          BASE_PATH: /${{ github.event.repository.name }}/
-        run: npm run build
+        run: |
+          REPO_NAME="${GITHUB_REPOSITORY#*/}"
+          export BASE_PATH="/${REPO_NAME}/"
+          echo "Building site for repository: ${REPO_NAME} with BASE_PATH=${BASE_PATH}"
+          npm run build
 
       - name: SPA 404 Fallback for GitHub Pages
         run: cp dist/index.html dist/404.html

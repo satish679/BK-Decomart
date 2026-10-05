@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { site, getPhoneUrl, getWhatsAppUrl } from "@/lib/site";
+import { site, getPhoneUrl, getWhatsAppUrl, assetUrl } from "@/lib/site";
 import { Phone, MessageCircle, Menu, X } from "lucide-react";
 
 const navLinks = [
@@ -67,7 +67,7 @@ export default function Nav() {
             onError={(e) => {
               if (!e.currentTarget.dataset.fallback) {
                 e.currentTarget.dataset.fallback = "true";
-                e.currentTarget.src = "/logo.png";
+                e.currentTarget.src = assetUrl("logo.png");
               }
             }}
             className={`transition-all duration-300 ${
