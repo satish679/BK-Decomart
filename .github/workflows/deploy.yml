@@ -34,7 +34,11 @@ jobs:
       - name: Build site
         run: |
           REPO_NAME="${GITHUB_REPOSITORY#*/}"
-          export BASE_PATH="/${REPO_NAME}/"
+          if [[ "${REPO_NAME}" =~ \.github\.io$ ]]; then
+            export BASE_PATH="/"
+          else
+            export BASE_PATH="/${REPO_NAME}/"
+          fi
           echo "Building site for repository: ${REPO_NAME} with BASE_PATH=${BASE_PATH}"
           npm run build
 
