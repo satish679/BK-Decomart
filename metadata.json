@@ -1,0 +1,6 @@
+{
+  "name": "BK Decomart",
+  "description": "Come, Let's Dressup Your Home. Premium curtains, blinds, wallpapers, carpets & mattresses in Madurai since 1995.",
+  "permissions": [],
+  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
