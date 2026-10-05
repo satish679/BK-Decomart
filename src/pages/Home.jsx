@@ -85,7 +85,7 @@ export default function Home() {
           <Reveal delay={150} className="md:col-span-6">
             <div className="hover-zoom aspect-[4/3] rounded-sm overflow-hidden bg-linen/30 border border-linen/80 shadow-soft p-1.5 bg-white/70">
               <LuxImg
-                name="images/store-pic"
+                name="store-main"
                 alt="BK Decomart Gomathipuram Showroom"
                 className="w-full h-full object-cover rounded-xs"
               />
