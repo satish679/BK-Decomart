@@ -43,7 +43,7 @@ export default function About() {
         <div className="max-w-[1440px] mx-auto px-5 sm:px-6 md:px-10">
           <Reveal className="hover-zoom aspect-[16/10] sm:aspect-cinema rounded-sm overflow-hidden shadow-soft border border-linen/80 p-1.5 bg-white/70">
             <LuxImg
-              name="store-pic"
+              name="store-main"
               alt="BK Decomart Real Showroom"
               className="w-full h-full object-cover rounded-xs"
             />
