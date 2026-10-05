@@ -35,7 +35,7 @@ const privacySections = [
 
 export default function Privacy() {
   return (
-    <div className="pt-28">
+    <div className="pt-36 sm:pt-44 md:pt-52">
       <section className="pb-14 bg-ivory">
         <div className="max-w-[1440px] mx-auto px-6 md:px-10">
           <Reveal>
