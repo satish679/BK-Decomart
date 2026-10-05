@@ -1,5 +1,4 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
-import { Play, Pause, RotateCcw } from "lucide-react";
 import { assetUrl } from "@/lib/site";
 
 const TOTAL_FRAMES = 212;
@@ -16,12 +15,9 @@ export default function CinematicHero() {
   const imagesRef = useRef([]);
   const currentFrameRef = useRef(0);
   const animFrameRef = useRef(null);
-  const autoplayIntervalRef = useRef(null);
 
-  const [currentFrame, setCurrentFrame] = useState(0);
+  const [, setCurrentFrame] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [loadedCount, setLoadedCount] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
 
   const resizeCanvas = useCallback(() => {
     const canvas = canvasRef.current;
@@ -83,19 +79,20 @@ export default function CinematicHero() {
   }, []);
 
   useEffect(() => {
-    const imgs = [];
+    const imgs = new Array(TOTAL_FRAMES);
     let isMounted = true;
     let loaded = 0;
 
-    for (let i = 0; i < TOTAL_FRAMES; i++) {
+    const loadFrame = (i, priority = "auto") => {
+      if (imgs[i]) return imgs[i];
       const img = new Image();
+      if (priority === "high") {
+        img.fetchPriority = "high";
+      }
       img.src = getFrameUrl(i);
       img.onload = () => {
         if (!isMounted) return;
         loaded++;
-        if (loaded % 15 === 0 || loaded === TOTAL_FRAMES || loaded === 1) {
-          setLoadedCount(loaded);
-        }
         if (loaded === 1 || (i === 0 && currentFrameRef.current === 0)) {
           resizeCanvas();
           drawFrame(currentFrameRef.current);
@@ -104,11 +101,27 @@ export default function CinematicHero() {
       img.onerror = () => {
         if (!isMounted) return;
         loaded++;
-        if (loaded % 15 === 0 || loaded === TOTAL_FRAMES || loaded === 1) {
-          setLoadedCount(loaded);
-        }
       };
-      imgs.push(img);
+      imgs[i] = img;
+      return img;
+    };
+
+    // 1. High priority: first frames
+    for (let i = 0; i < 15; i++) {
+      loadFrame(i, "high");
+    }
+    // 2. High priority: distributed keyframes across entire 0..211 range so scrubbing always works
+    for (let i = 15; i < TOTAL_FRAMES; i += 4) {
+      loadFrame(i, "high");
+    }
+    // 3. High priority: the tail frames (195..211) so the final sequence always finishes
+    for (let i = Math.max(0, TOTAL_FRAMES - 20); i < TOTAL_FRAMES; i++) {
+      loadFrame(i, "high");
+    }
+
+    // 4. Fill in all remaining intermediate frames
+    for (let i = 0; i < TOTAL_FRAMES; i++) {
+      loadFrame(i, "auto");
     }
 
     imagesRef.current = imgs;
@@ -130,7 +143,6 @@ export default function CinematicHero() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (isPlaying) return;
       const container = containerRef.current;
       if (!container) return;
 
@@ -138,14 +150,21 @@ export default function CinematicHero() {
       const scrollableDistance = container.offsetHeight - window.innerHeight;
       if (scrollableDistance <= 0) return;
 
-      const progress = Math.max(0, Math.min(scrollableDistance, -rect.top)) / scrollableDistance;
-      const targetFrame = Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.floor(progress * (TOTAL_FRAMES - 1))));
+      const rawProgress = Math.max(0, Math.min(scrollableDistance, -rect.top)) / scrollableDistance;
+
+      // Accelerate progress slightly so all 212 frames finish by 85% of scroll,
+      // and frame 212 is held steadily for the remaining 15% before section transitions
+      const animProgress = Math.min(1, Math.max(0, rawProgress / 0.85));
+      const targetFrame = Math.min(
+        TOTAL_FRAMES - 1,
+        Math.max(0, Math.round(animProgress * (TOTAL_FRAMES - 1)))
+      );
 
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
       animFrameRef.current = requestAnimationFrame(() => {
         currentFrameRef.current = targetFrame;
         setCurrentFrame(targetFrame);
-        setScrollProgress(progress);
+        setScrollProgress(rawProgress);
         drawFrame(targetFrame);
       });
     };
@@ -157,53 +176,16 @@ export default function CinematicHero() {
       window.removeEventListener("scroll", handleScroll);
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
-  }, [drawFrame, isPlaying]);
+  }, [drawFrame]);
 
-  const togglePlay = () => {
-    if (isPlaying) {
-      setIsPlaying(false);
-      if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
-    } else {
-      setIsPlaying(true);
-      autoplayIntervalRef.current = setInterval(() => {
-        let next = currentFrameRef.current + 1;
-        if (next >= TOTAL_FRAMES) next = 0;
-        currentFrameRef.current = next;
-        setCurrentFrame(next);
-        setScrollProgress(next / (TOTAL_FRAMES - 1));
-        drawFrame(next);
-      }, 1000 / 30);
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
-    };
-  }, []);
-
-  const restart = () => {
-    if (isPlaying) {
-      setIsPlaying(false);
-      if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
-    }
-    currentFrameRef.current = 0;
-    setCurrentFrame(0);
-    setScrollProgress(0);
-    drawFrame(0);
-    if (containerRef.current) {
-      containerRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
-  const heroOpacity = Math.max(0, 1 - scrollProgress * 5.5);
+  const heroOpacity = Math.max(0, 1 - scrollProgress * 5.0);
   const heroTranslateY = scrollProgress * -40;
 
   return (
     <section
       ref={containerRef}
       className="scroll-container relative w-full bg-[#faf7f2]"
-      style={{ height: "450vh" }}
+      style={{ height: "350vh" }}
       data-testid="cinematic-hero"
     >
       <div className="sticky top-0 left-0 w-full h-[100svh] overflow-hidden flex items-center justify-center">
@@ -230,54 +212,7 @@ export default function CinematicHero() {
           </p>
         </div>
 
-        {/* Video Player Floating Controls */}
-        <div className="absolute top-24 sm:top-28 right-4 sm:right-8 z-30 flex items-center gap-1.5 p-1.5 rounded-full bg-white/80 backdrop-blur-md border border-linen/80 shadow-soft">
-          <button
-            onClick={togglePlay}
-            className="p-1.5 rounded-full hover:bg-black/5 transition-colors text-matte focus:outline-none"
-            title={isPlaying ? "Pause Sequence" : "Auto-play Sequence"}
-            aria-label={isPlaying ? "Pause Sequence" : "Auto-play Sequence"}
-          >
-            {isPlaying ? <Pause size={14} /> : <Play size={14} />}
-          </button>
-          <button
-            onClick={restart}
-            className="p-1.5 rounded-full hover:bg-black/5 transition-colors text-matte/60 hover:text-matte focus:outline-none"
-            title="Restart Sequence"
-            aria-label="Restart Sequence"
-          >
-            <RotateCcw size={14} />
-          </button>
-          <div className="h-3 w-px bg-black/15" />
-          <div className="px-1 text-[0.68rem] font-mono tracking-wider text-matte">
-            <span className="text-primary font-bold">{String(currentFrame + 1).padStart(3, "0")}</span>
-            <span className="text-matte/40"> / {TOTAL_FRAMES}</span>
-          </div>
-        </div>
-
-        {/* Bottom indicator */}
-        <div
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 pointer-events-none transition-all duration-300 flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-linen/80 text-matte text-[0.7rem] uppercase tracking-widest font-mono shadow-md"
-          style={{
-            opacity: scrollProgress > 0.08 && scrollProgress < 0.92 ? 1 : 0,
-            transform: `translate(-50%, ${scrollProgress > 0.08 && scrollProgress < 0.92 ? "0" : "10px"})`,
-          }}
-        >
-          <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-          <span>Scroll to explore sequence</span>
-        </div>
-
-        <div
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 pointer-events-none transition-all duration-300 flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary text-ivory text-[0.72rem] font-medium uppercase tracking-wider shadow-lg"
-          style={{
-            opacity: scrollProgress >= 0.92 ? 1 : 0,
-            transform: `translate(-50%, ${scrollProgress >= 0.92 ? "0" : "10px"})`,
-          }}
-        >
-          <span>Our Story Next ↓</span>
-        </div>
-
-        {/* Bottom Sequence Progress Bar */}
+        {/* Subtle Bottom Sequence Progress Bar */}
         <div className="absolute bottom-0 left-0 w-full h-[3px] bg-black/10 z-30">
           <div
             className="h-full bg-gradient-to-r from-primary via-accent to-primary transition-[width] duration-75"
