@@ -191,7 +191,8 @@ export default function CinematicHero() {
       <div className="sticky top-0 left-0 w-full h-[100svh] overflow-hidden flex items-center justify-center">
         <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block" />
 
-        <div className="absolute inset-0 bg-gradient-to-t from-[#faf7f2] via-transparent to-[#faf7f2]/30 pointer-events-none" />
+        <div className="absolute inset-0 bg-[#faf8f5]/20 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#faf8f5] via-transparent to-[#faf8f5]/30 pointer-events-none" />
 
         {/* Hero Title Overlay */}
         <div
@@ -201,15 +202,17 @@ export default function CinematicHero() {
             transform: `translateY(${heroTranslateY}px)`,
           }}
         >
-          <span className="overline mb-4 sm:mb-6 text-xs sm:text-sm font-semibold tracking-[0.24em] text-matte/80">
-            <span className="hairline" /> Since 1995 · Madurai <span className="hairline" />
-          </span>
-          <h1 className="hero-title text-4xl sm:text-6xl md:text-7xl lg:text-8xl max-w-4xl leading-[1.08] text-matte">
-            Come, Let's <span className="font-serif-italic text-walnut">Dressup</span> Your Home.
-          </h1>
-          <p className="mt-4 sm:mt-6 text-sm sm:text-base md:text-lg text-charcoal/80 max-w-xl font-light leading-relaxed">
-            Curtains, architectural window blinds, designer wallpapers, rugs and mattresses hand-tailored to the millimeter.
-          </p>
+          <div className="max-w-3xl sm:max-w-4xl mx-auto px-6 py-7 sm:px-12 sm:py-9 rounded-2xl bg-[#faf8f5]/80 backdrop-blur-md border border-[#e8ded2]/70 shadow-[0_4px_30px_rgba(30,25,21,0.06)] flex flex-col items-center">
+            <span className="overline mb-3 sm:mb-5 text-xs sm:text-sm font-semibold tracking-[0.24em] text-primary">
+              <span className="hairline" /> Since 1995 · Madurai <span className="hairline" />
+            </span>
+            <h1 className="hero-title text-3xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.12] text-matte font-serif font-bold tracking-tight">
+              Come, Let's <span className="font-serif-italic text-primary">Dressup</span> Your Home.
+            </h1>
+            <p className="mt-3 sm:mt-5 text-sm sm:text-base md:text-lg text-charcoal/90 max-w-xl font-normal leading-relaxed">
+              Curtains, architectural window blinds, designer wallpapers, rugs and mattresses hand-tailored to the millimeter.
+            </p>
+          </div>
         </div>
 
         {/* Subtle Bottom Sequence Progress Bar */}
